@@ -62,6 +62,11 @@
                             Change
                         </b-button>
                     </template>
+
+                    <template v-slot:cell(Company)="data">
+                        <a class="mojaAKlasa" @click="goToCompany(data.item)">{{data.item.Company}}</a>
+                    </template>
+
                 </b-table>
             </b-col>
         </b-row>
@@ -90,6 +95,14 @@ export default {
                 items: []
             },
             filterForm: {
+                one_way: 'null',
+                grad_destination: '',
+                grad_origin: '',
+                departDate: null,
+                returnDate: null,
+                error: null
+            },
+            lastSelectedFilterForm: {
                 one_way: 'null',
                 grad_destination: '',
                 grad_origin: '',
@@ -166,6 +179,11 @@ export default {
                     this.table.items.push(item)
                 })
 
+                this.lastSelectedFilterForm.one_way = this.filterForm.one_way
+                this.lastSelectedFilterForm.grad_destination = this.filterForm.grad_destination
+                this.lastSelectedFilterForm.grad_origin = this.filterForm.grad_origin
+                this.lastSelectedFilterForm.departDate = this.filterForm.departDate
+                this.lastSelectedFilterForm.returnDate = this.filterForm.returnDate
             }catch(error) {
                 console.log(error);
             }
@@ -185,7 +203,23 @@ export default {
                     
                     if (responseDelete.data === true){
                         try {
-                            const karteResponse = await CardService.sve()
+                            let datumPolaska = this.lastSelectedFilterForm.departDate
+                            if (datumPolaska) 
+                                datumPolaska = new Date(datumPolaska.toString())
+
+                            let datumPovratka = this.lastSelectedFilterForm.returnDate
+                            if (datumPovratka) 
+                                datumPovratka = new Date(datumPovratka.toString())
+                                
+                            let oneWay = this.lastSelectedFilterForm.one_way
+                            if (oneWay === 'null') oneWay = null
+                            else if (oneWay === 'true') oneWay = true
+                            else oneWay = false
+
+                            const karteResponse = await CardService.filterKarte(
+                                {mestoPolaska:this.lastSelectedFilterForm.grad_origin, destinacija:this.lastSelectedFilterForm.grad_destination
+                                ,datumPolaska:datumPolaska, datumPovratka:datumPovratka, oneWay:oneWay})
+
                             this.table.items = []
                             karteResponse.data.forEach(karta => {
                                 let returnDatee = '/'
@@ -197,10 +231,10 @@ export default {
                                 , Origin:karta.flight.grad_origin.name, Destination:karta.flight.grad_destination.name, realValue:karta}
                                 this.table.items.push(item)
                             })
+                            alert('You have successfully delete the card')
                         }catch(error) {
                             console.log(error);
                         }
-                        alert('You have successfully delete the card')
                     }else {
                         alert('An error occurred')
                     }
@@ -216,6 +250,35 @@ export default {
                         const allReservationsForUser = await ReservationService.rezervacijeByUsername(this.$store.state.token, this.$store.state.user.username)
                         this.$store.dispatch('setUserReservations', allReservationsForUser.data)
                         console.log(allReservationsForUser);
+
+                        let datumPolaska = this.lastSelectedFilterForm.departDate
+                        if (datumPolaska) 
+                            datumPolaska = new Date(datumPolaska.toString())
+
+                        let datumPovratka = this.lastSelectedFilterForm.returnDate
+                        if (datumPovratka) 
+                            datumPovratka = new Date(datumPovratka.toString())
+                            
+                        let oneWay = this.lastSelectedFilterForm.one_way
+                        if (oneWay === 'null') oneWay = null
+                        else if (oneWay === 'true') oneWay = true
+                        else oneWay = false
+
+                        const karteResponse = await CardService.filterKarte(
+                                {mestoPolaska:this.lastSelectedFilterForm.grad_origin, destinacija:this.lastSelectedFilterForm.grad_destination
+                                ,datumPolaska:datumPolaska, datumPovratka:datumPovratka, oneWay:oneWay})
+
+                        this.table.items = []
+                        karteResponse.data.forEach(karta => {
+                            let returnDatee = '/'
+                            if (!karta.one_way && karta.return_date) {
+                                returnDatee = karta.return_date.substring(0,10)
+                            }
+                            let item = {One_way:karta.one_way, Company:karta.avionskaKompanija.name
+                            , Count:karta.available_count, Depart:karta.depart_date.substring(0,10), Return:returnDatee
+                            , Origin:karta.flight.grad_origin.name, Destination:karta.flight.grad_destination.name, realValue:karta}
+                            this.table.items.push(item)
+                        })
                         alert('You have successfully reserved card')
                     } 
                 }catch(error) {
@@ -234,6 +297,16 @@ export default {
             
             this.$router.push({
                 path: `/admin/editTicket/${data.realValue.id}`
+            })
+        },
+        async goToCompany(data) {
+            console.log(data);
+            let kompanijaID = data.realValue.avionskaKompanija.id
+            this.$router.push({
+                name: 'viewCompany',
+                params: {
+                    comapnyId: kompanijaID
+                }
             })
         }
     }
@@ -256,5 +329,9 @@ export default {
     }
     #forma {
         padding-bottom: 50px;
+    }
+    .mojaAKlasa {
+        color: rgb(66, 135, 245);
+        cursor: pointer;
     }
 </style>

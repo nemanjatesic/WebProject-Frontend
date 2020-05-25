@@ -13,9 +13,6 @@
 
             <ul class="nav navbar-nav ml-auto">
                 <li v-if="!$store.state.isUserLoggedIn" class="nav-item">
-                    <router-link class="nav-link" :to="{ name: 'register'}">Register</router-link>
-                </li>
-                <li v-if="!$store.state.isUserLoggedIn" class="nav-item">
                     <router-link class="nav-link" :to="{ name: 'login'}">Log in</router-link>
                 </li>
                 <li v-if="$store.state.isUserLoggedIn" class="nav-item">
@@ -24,11 +21,11 @@
                 <li v-if="$store.state.isUserLoggedIn" class="nav-item">
                      <div class="nav-link disabled">{{$store.state.user.username}} | Type : {{$store.state.user.tipKorisnika}}</div>
                 </li>
-                <li v-if="$store.state.isUserLoggedIn && $store.state.user.tipKorisnika === 'USER'" class="nav-item">
-                    <div class="nav-link" :to="logout" >Reservations : {{$store.state.user.rezervacije.length}}</div>
+                <li v-if="$store.state.isUserLoggedIn && $store.state.user.tipKorisnika === 'USER'" @click="reservation" class="nav-item">
+                    <div class="nav-link" :to="{ name: 'userView'}" >Reservations : {{$store.state.user.rezervacije.length}}</div>
                 </li>
                 <li v-if="$store.state.isUserLoggedIn" @click="logout"  class="nav-item">
-                    <div class="nav-link" :to="logout" >Log out</div>
+                    <div class="nav-link" :to="{ name: 'login'}" >Log out</div>
                 </li>
             </ul>
         </div>
@@ -42,7 +39,12 @@ export default {
             this.$store.dispatch('setToken', null)
             this.$store.dispatch('setUser', null)
             this.$router.push({
-                name: 'root'
+                name: 'login'
+            })
+        },
+        reservation() {
+            this.$router.push({
+                name: 'userView'
             })
         }
     }

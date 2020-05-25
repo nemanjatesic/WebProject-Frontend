@@ -9,6 +9,7 @@ import UserView from '@/components/UserView'
 import AdminPanel from '@/components/AdminPanel'
 import CreateTicket from '@/components/CreateTicket'
 import ChangeTicket from '@/components/ChangeTicket'
+import CompanyView from '@/components/CompanyView'
 
 Vue.use(Router)
 
@@ -43,6 +44,11 @@ export default new Router({
       path: '/admin/editTicket/:ticketId',
       name: 'changeTicket',
       component: ChangeTicket
+    },
+    {
+      path: '/viewCompany/:comapnyId',
+      name: 'viewCompany',
+      component: CompanyView
     },
     {
       path: '/admin',

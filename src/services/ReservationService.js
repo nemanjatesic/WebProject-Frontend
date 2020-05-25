@@ -20,8 +20,7 @@ export default {
                     username:username
                 }
           })
-    }
-    ,
+    },
     filterRezervacijeForUsername(jwt, username, filter) {
         return Api().post('filterRezervacijeForUsername', filter, {
             headers: {
@@ -32,6 +31,18 @@ export default {
                 params: {
                     username:username
                 }
-          })
+            })
+    },
+    deleteRezervacija(jwt, rezervacijaID) {
+        return Api().delete('deleteRezervacija', {
+            headers: {
+                    "Accept": "application/json",
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + jwt
+                },
+                params: {
+                    rezervacijaID:rezervacijaID
+                }
+            })
     }
 }

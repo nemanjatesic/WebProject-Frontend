@@ -72,6 +72,14 @@ export default {
                 returnDate: null,
                 error: null
             },
+            lastSelectedFilterForm: {
+                one_way: 'null',
+                grad_destination: '',
+                grad_origin: '',
+                departDate: null,
+                returnDate: null,
+                error: null
+            },
             table: {
                 fields: [
                     {key: 'One_way', label: 'One Way'}, 
@@ -111,7 +119,7 @@ export default {
                 }
                 let item = {One_way:karta.one_way, Company:karta.avionskaKompanija.name
                 , Count:karta.available_count, Depart:karta.depart_date.substring(0,10), Return:returnDatee
-                , Origin:karta.flight.grad_origin.name, Destination:karta.flight.grad_destination.name, Valid:rezervacija.available}
+                , Origin:karta.flight.grad_origin.name, Destination:karta.flight.grad_destination.name, Valid:rezervacija.available, realValue:rezervacija}
                 this.table.items.push(item)
             })
 
@@ -141,7 +149,6 @@ export default {
                     {mestoPolaska:this.filterForm.grad_origin, destinacija:this.filterForm.grad_destination
                     ,datumPolaska:datumPolaska, datumPovratka:datumPovratka, oneWay:oneWay})
 
-
                 this.table.items = []
 
                 karteResponse.data.forEach(rezervacija => {
@@ -152,16 +159,67 @@ export default {
                     }
                     let item = {One_way:karta.one_way, Company:karta.avionskaKompanija.name
                     , Count:karta.available_count, Depart:karta.depart_date.substring(0,10), Return:returnDatee
-                    , Origin:karta.flight.grad_origin.name, Destination:karta.flight.grad_destination.name}
+                    , Origin:karta.flight.grad_origin.name, Destination:karta.flight.grad_destination.name, Valid:rezervacija.available, realValue:rezervacija}
                     this.table.items.push(item)
                 })
 
+                this.lastSelectedFilterForm.one_way = this.filterForm.one_way
+                this.lastSelectedFilterForm.grad_destination = this.filterForm.grad_destination
+                this.lastSelectedFilterForm.grad_origin = this.filterForm.grad_origin
+                this.lastSelectedFilterForm.departDate = this.filterForm.departDate
+                this.lastSelectedFilterForm.returnDate = this.filterForm.returnDate
             }catch(error) {
                 console.log(error);
             }
         },
         async deleteReservation(data) {
+            console.log(data);
+            if (confirm('Are you sure you want to delete this reservation ?') === true) {
+                try {
+                    const responseDelete = await ReservationService.deleteRezervacija(this.$store.state.token,data.realValue.id)
+                    if (responseDelete.data === false){
+                        alert('An error occurred')
+                        return
+                    } 
 
+                    let datumPolaska = this.lastSelectedFilterForm.departDate
+                    if (datumPolaska) 
+                        datumPolaska = new Date(datumPolaska.toString())
+
+                    let datumPovratka = this.lastSelectedFilterForm.returnDate
+                    if (datumPovratka) 
+                        datumPovratka = new Date(datumPovratka.toString())
+                        
+                    let oneWay = this.lastSelectedFilterForm.one_way
+                    if (oneWay === 'null') oneWay = null
+                    else if (oneWay === 'true') oneWay = true
+                    else oneWay = false
+
+                    const karteResponse = await ReservationService.filterRezervacijeForUsername(
+                        this.$store.state.token, this.$store.state.user.username,
+                        {mestoPolaska:this.lastSelectedFilterForm.grad_origin, destinacija:this.lastSelectedFilterForm.grad_destination
+                        ,datumPolaska:datumPolaska, datumPovratka:datumPovratka, oneWay:oneWay})
+
+                    this.table.items = []
+
+                    karteResponse.data.forEach(rezervacija => {
+                        let karta = rezervacija.avionskaKarta
+                        let returnDatee = '/'
+                        if (!karta.one_way && karta.return_date) {
+                            returnDatee = karta.return_date.substring(0,10)
+                        }
+                        let item = {One_way:karta.one_way, Company:karta.avionskaKompanija.name
+                        , Count:karta.available_count, Depart:karta.depart_date.substring(0,10), Return:returnDatee
+                        , Origin:karta.flight.grad_origin.name, Destination:karta.flight.grad_destination.name, Valid:rezervacija.available, realValue:rezervacija}
+                        this.table.items.push(item)
+                    })
+
+                    const allReservationsForUser = await ReservationService.rezervacijeByUsername(this.$store.state.token, this.$store.state.user.username)
+                    this.$store.dispatch('setUserReservations', allReservationsForUser.data)
+                }catch(error) {
+                    console.log(error);
+                }
+            }
         },
         async clearAll() {
             this.filterForm.grad_destination = ''
