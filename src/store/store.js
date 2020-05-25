@@ -22,6 +22,9 @@ export default new Vuex.Store({
     setUser (state, user) {
       state.user = user
       state.isUserLoggedIn = (user) ? true : false;
+    },
+    setUserReservations (state, reservations) {
+      state.user.rezervacije = reservations
     }
   },
   actions: {
@@ -30,6 +33,9 @@ export default new Vuex.Store({
     },
     setUser ({commit}, user) {
       commit('setUser', user)
+    },
+    setUserReservations ({commit}, reservations) {
+      commit('setUserReservations', reservations)
     }
   }
 })

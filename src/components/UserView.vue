@@ -44,7 +44,13 @@
             </b-col>
                 <br><br><br>
                 <b-col col lg="10">
-                    <b-table bordered dark id="tabela" striped hover :items="table.items" :fields="table.fields"></b-table>
+                    <b-table bordered dark id="tabela" striped hover :items="table.items" :fields="table.fields">
+                        <template v-slot:cell(Dugme)="data">
+                            <b-button size="sm" @click="deleteReservation(data.item)" class="mr-1" variant="danger">
+                                Delete
+                            </b-button>
+                        </template>
+                    </b-table>
                 </b-col>
         </b-row>
     </b-container>
@@ -53,6 +59,7 @@
 
 <script>
 import CardService from '@/services/CardService'
+import ReservationService from '@/services/ReservationService'
 
 export default {
     data() {
@@ -66,7 +73,16 @@ export default {
                 error: null
             },
             table: {
-                fields: ['One_way', 'Origin', 'Destination', 'Depart', 'Return', 'Company', 'Count'],
+                fields: [
+                    {key: 'One_way', label: 'One Way'}, 
+                    {key: 'Origin', label: 'Origin'}, 
+                    {key: 'Destination',label: 'Destination'}, 
+                    {key: 'Depart',label: 'Depart'}, 
+                    {key: 'Return',label: 'Return'}, 
+                    {key: 'Company', label: 'Company'}, 
+                    {key: 'Count', label: 'Count'}, 
+                    {key: 'Valid', label: 'Valid'}, 
+                    {key: 'Dugme', label: ''}],
                 items: []
             }
         }
@@ -85,16 +101,17 @@ export default {
             })
         }
         try {
-            const karteResponse = await CardService.sve()
+            const karteResponse = await ReservationService.rezervacijeByUsername(this.$store.state.token, this.$store.state.user.username)
 
-            karteResponse.data.forEach(karta => {
+            karteResponse.data.forEach(rezervacija => {
+                let karta = rezervacija.avionskaKarta
                 let returnDatee = '/'
                 if (!karta.one_way && karta.return_date) {
                     returnDatee = karta.return_date.substring(0,10)
                 }
                 let item = {One_way:karta.one_way, Company:karta.avionskaKompanija.name
                 , Count:karta.available_count, Depart:karta.depart_date.substring(0,10), Return:returnDatee
-                , Origin:karta.flight.grad_origin.name, Destination:karta.flight.grad_destination.name}
+                , Origin:karta.flight.grad_origin.name, Destination:karta.flight.grad_destination.name, Valid:rezervacija.available}
                 this.table.items.push(item)
             })
 
@@ -119,13 +136,16 @@ export default {
                 else if (oneWay === 'true') oneWay = true
                 else oneWay = false
 
-                const karteResponse = await CardService.filterKarte(
+                const karteResponse = await ReservationService.filterRezervacijeForUsername(
+                    this.$store.state.token, this.$store.state.user.username,
                     {mestoPolaska:this.filterForm.grad_origin, destinacija:this.filterForm.grad_destination
                     ,datumPolaska:datumPolaska, datumPovratka:datumPovratka, oneWay:oneWay})
 
+
                 this.table.items = []
 
-                karteResponse.data.forEach(karta => {
+                karteResponse.data.forEach(rezervacija => {
+                    let karta = rezervacija.avionskaKarta
                     let returnDatee = '/'
                     if (!karta.one_way && karta.return_date) {
                         returnDatee = karta.return_date.substring(0,10)
@@ -140,11 +160,15 @@ export default {
                 console.log(error);
             }
         },
+        async deleteReservation(data) {
+
+        },
         async clearAll() {
             this.filterForm.grad_destination = ''
             this.filterForm.grad_origin = ''
             this.filterForm.departDate = null
             this.filterForm.returnDate = null
+            this.filterForm.one_way = 'null'
         }
     }
 };

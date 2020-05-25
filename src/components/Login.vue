@@ -57,7 +57,7 @@ export default {
                     username: this.form.username,
                     password: this.form.password
                 })
-                console.log(response.data);
+                console.log(response);
                 
                 this.$store.dispatch('setToken', response.data.JWTToken)
                 this.$store.dispatch('setUser', response.data)

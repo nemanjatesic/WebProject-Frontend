@@ -15,7 +15,7 @@
                         <b-form-radio v-model="filterForm.one_way" name="some-radios" value="null">Any</b-form-radio>
                     </b-form-group>
 
-                    <div v-if="userType === 'USER'">
+                    <div>
                         <b-form-group id="input-group-1" label="Place of department :" label-for="input-1">
                             <b-form-input
                                 id="input-1"
@@ -71,6 +71,7 @@
 
 <script>
 import CardService from '@/services/CardService'
+import ReservationService from '@/services/ReservationService'
 
 export default {
     data() {
@@ -120,6 +121,7 @@ export default {
                 let item = {One_way:karta.one_way, Company:karta.avionskaKompanija.name
                 , Count:karta.available_count, Depart:karta.depart_date.substring(0,10), Return:returnDatee
                 , Origin:karta.flight.grad_origin.name, Destination:karta.flight.grad_destination.name, realValue:karta}
+                
                 this.table.items.push(item)
             })
         }catch(error) {
@@ -173,6 +175,7 @@ export default {
             this.filterForm.grad_origin = ''
             this.filterForm.departDate = null
             this.filterForm.returnDate = null
+            this.filterForm.one_way = 'null'
         },
         async doStuff(data) {
             console.log(data);
@@ -203,8 +206,26 @@ export default {
                     }
                 }
             }
-            if (this.userType === 'USER') {
-                
+            else if (this.userType === 'USER') {     
+                try {
+                    let rezervacija = {available:true, flight:data.realValue.flight, avionskaKarta:data.realValue, korisnik:this.$store.state.user}
+                    const reservationResponse = await ReservationService.addRezervacija(rezervacija)
+                    console.log(reservationResponse);
+                    
+                    if (reservationResponse.status === 200) {
+                        const allReservationsForUser = await ReservationService.rezervacijeByUsername(this.$store.state.token, this.$store.state.user.username)
+                        this.$store.dispatch('setUserReservations', allReservationsForUser.data)
+                        console.log(allReservationsForUser);
+                        alert('You have successfully reserved card')
+                    } 
+                }catch(error) {
+                    if (error.response.status === 409)
+                        alert('You have already reserved that ticket')
+                    else if (error.response.status === 410)
+                        alert('Ticket you are trying to reserve has been changed, please reload page')
+                    else
+                        alert('An error occurred with status code : ' + error.response.status)
+                }
             }
         },
         async change(data) {

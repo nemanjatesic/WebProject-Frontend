@@ -9,10 +9,6 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import store from './store/store'
 import {sync} from 'vuex-router-sync'
 
-import VueGoodTablePlugin from 'vue-good-table';
-import 'vue-good-table/dist/vue-good-table.css'
-
-Vue.use(VueGoodTablePlugin);
 Vue.use(BootstrapVue);
 sync(store, router)
 
