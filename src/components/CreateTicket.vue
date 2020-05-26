@@ -138,7 +138,7 @@ export default {
                 let avionskaKompanija = JSON.parse(JSON.stringify(this.ticketForm.airlineCompanyData.selected.celo))
                 let flight = JSON.parse(JSON.stringify(this.ticketForm.flightData.selected.celo))
 
-                const resp = await CardService.dodajKartu({one_way: one_way, depart_date:depart_date, return_date:return_date, avionskaKompanija: avionskaKompanija, flight:flight, available_count:available_count})
+                const resp = await CardService.dodajKartu(this.$store.state.token, {one_way: one_way, depart_date:depart_date, return_date:return_date, avionskaKompanija: avionskaKompanija, flight:flight, available_count:available_count})
                 alert('Karta je uspesno dodata')
             } catch (error) {
                 console.log(error);

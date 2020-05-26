@@ -27,8 +27,6 @@
 
 <script>
 import AirlinesService from '@/services/AirlinesService'
-import CardService from '@/services/CardService'
-import ReservationService from '@/services/ReservationService'
 
 export default {
     data () {
@@ -58,7 +56,7 @@ export default {
                     alert('New name can not be the same as the last name')
                     return
                 }
-                const response = await AirlinesService.changeCompanyName(this.comapny, this.form.name)
+                const response = await AirlinesService.changeCompanyName(this.$store.state.token, this.comapny, this.form.name)
                 alert('You have successfully changed name of the company')
                 this.$router.go(0)
             }catch(error) {

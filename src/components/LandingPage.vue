@@ -199,7 +199,7 @@ export default {
             console.log(data);
             if (this.userType === 'ADMIN') {
                 if (confirm('Are you sure you want to delete this card ?') === true) {
-                    const responseDelete = await CardService.deleteKartaByID(data.realValue.id)
+                    const responseDelete = await CardService.deleteKartaByID(this.$store.state.token, data.realValue.id)
                     
                     if (responseDelete.data === true){
                         try {
@@ -243,7 +243,7 @@ export default {
             else if (this.userType === 'USER') {     
                 try {
                     let rezervacija = {available:true, flight:data.realValue.flight, avionskaKarta:data.realValue, korisnik:this.$store.state.user}
-                    const reservationResponse = await ReservationService.addRezervacija(rezervacija)
+                    const reservationResponse = await ReservationService.addRezervacija(this.$store.state.token, rezervacija)
                     console.log(reservationResponse);
                     
                     if (reservationResponse.status === 200) {

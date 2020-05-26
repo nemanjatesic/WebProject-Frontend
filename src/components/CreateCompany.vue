@@ -48,7 +48,7 @@ export default {
                     alert('Please enter name')
                     return
                 }
-                const response = await AirlinesService.createCompany({name:name})
+                const response = await AirlinesService.createCompany(this.$store.state.token, {name:name})
                 alert('You have created a new company')
             }catch(error) {
                 if (error.response.status === 409) {

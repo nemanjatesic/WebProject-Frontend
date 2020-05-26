@@ -137,12 +137,16 @@ export default {
             let flight = JSON.parse(JSON.stringify(this.ticketForm.flightData.selected.celo))
 
             try {
-                const resp = await CardService.modifyKarta({id:this.ticket.id, version:this.ticket.version, one_way: one_way, depart_date:depart_date, return_date:return_date, avionskaKompanija: avionskaKompanija, flight:flight, available_count:available_count})
+                const resp = await CardService.modifyKarta(this.$store.state.token, {id:this.ticket.id, version:this.ticket.version, one_way: one_way, depart_date:depart_date, return_date:return_date, avionskaKompanija: avionskaKompanija, flight:flight, available_count:available_count})
+                this.$router.go(0)
                 alert('You have changed ticket successfully')
+                console.log(resp);
             }catch(error) {
+                console.log(error);
+                
                 alert('An error occurred ')
             }
-            console.log(resp);
+            
         }
     }
 }

@@ -10,12 +10,12 @@ export default {
             },
         })
     },
-    dodajKartu(karta) {
+    dodajKartu(jwt, karta) {
         return Api().post('addKarta', karta, {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                //"Authorization": "Bearer " + localStorage.jwt
+                "Authorization": "Bearer " + jwt
             },
         })
     },
@@ -40,24 +40,24 @@ export default {
             }
         })
     },
-    deleteKartaByID(id) {
+    deleteKartaByID(jwt, id) {
         return Api().delete('deleteKarta', {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                //"Authorization": "Bearer " + localStorage.jwt
+                "Authorization": "Bearer " + jwt
             },
             params: {
                 kartaID:id
             }
         })
     },
-    modifyKarta(karta) {
+    modifyKarta(jwt, karta) {
         return Api().patch('modifyKarta', karta, {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                //"Authorization": "Bearer " + localStorage.jwt
+                "Authorization": "Bearer " + jwt
             }
         })
     },

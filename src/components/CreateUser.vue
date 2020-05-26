@@ -72,12 +72,14 @@ export default {
         async register () {
             if (!this.validateForm()) return
             try {
-                const response = await UserService.createKorisnik({
+                const response = await UserService.createKorisnik(this.$store.state.token, {
                     username: this.userForm.username,
                     password: this.userForm.password,
                     tipKorisnika: this.userForm.tipKorisnika
                 })
                 console.log(response.data);
+                alert('You have secsesfully created new user')
+                this.$router.go(0)
                 /*
                 this.$store.dispatch('setToken', response.data.token)
                 this.$store.dispatch('setUser', response.data.user)
@@ -85,7 +87,11 @@ export default {
                   name: 'posts'
                 })*/
             } catch (error) {
-                alert('An error occurred with status code ' + error.response.status)
+                if (error.response.status === 409){
+                    alert('User with that username already exists')
+                }else {
+                    alert('An error occurred with status code ' + error.response.status)
+                }
             }
         },
         validateForm() {
@@ -97,6 +103,7 @@ export default {
                 alert('Please enter password')
                 return false
             }
+            return true
         },
         onReset(evt) {
             evt.preventDefault();

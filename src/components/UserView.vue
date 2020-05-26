@@ -185,7 +185,7 @@ export default {
                         alert('An error occurred')
                         return
                     } 
-
+                    
                     let datumPolaska = this.lastSelectedFilterForm.departDate
                     if (datumPolaska) 
                         datumPolaska = new Date(datumPolaska.toString())

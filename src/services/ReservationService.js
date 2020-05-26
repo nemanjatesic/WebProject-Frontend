@@ -1,11 +1,12 @@
 import Api from '@/services/Api'
 
 export default {
-    addRezervacija(rezervacija) {
+    addRezervacija(jwt, rezervacija) {
         return Api().post('addRezervacija', rezervacija, {
             headers: {
                 "Accept": "application/json",
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + jwt
               },
           })
     },

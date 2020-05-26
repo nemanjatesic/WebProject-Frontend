@@ -22,33 +22,33 @@ export default {
             }
         })
     },
-    deleteCompanyByID(id) {
+    deleteCompanyByID(jwt, id) {
         return Api().delete('deleteCompany', {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                //"Authorization": "Bearer " + localStorage.jwt
+                "Authorization": "Bearer " + jwt
             },
             params: {
                 kompanijaID:id
             }
         })
     },
-    createCompany(company) {
+    createCompany(jwt, company) {
         return Api().post('createCompany', company,  {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                //"Authorization": "Bearer " + localStorage.jwt
+                "Authorization": "Bearer " + jwt
             }
         })
     },
-    changeCompanyName(company, newName) {
+    changeCompanyName(jwt, company, newName) {
         return Api().post('changeCompanyName', company,  {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
-                //"Authorization": "Bearer " + localStorage.jwt
+                "Authorization": "Bearer " + jwt
             },
             params: {
                 name:newName
