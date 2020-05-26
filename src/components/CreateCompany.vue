@@ -44,11 +44,17 @@ export default {
         async create() {
             try {
                 let name = this.form.name
+                if (!name) {
+                    alert('Please enter name')
+                    return
+                }
                 const response = await AirlinesService.createCompany({name:name})
                 alert('You have created a new company')
             }catch(error) {
                 if (error.response.status === 409) {
                     alert('Company with that name already exists')
+                }else {
+                    alert('An error occurred with status code ' + error.response.status)
                 }
             }
         }

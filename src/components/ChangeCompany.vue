@@ -50,6 +50,14 @@ export default {
     methods: {
         async change() {
             try {
+                if (!this.form.name) {
+                    alert('New name must have at least one character')
+                    return
+                }
+                if (this.form.name === this.comapny.name) {
+                    alert('New name can not be the same as the last name')
+                    return
+                }
                 const response = await AirlinesService.changeCompanyName(this.comapny, this.form.name)
                 alert('You have successfully changed name of the company')
                 this.$router.go(0)

@@ -6,6 +6,9 @@
                 <li v-if="$store.state.isUserLoggedIn" class="nav-item active">
                     <router-link class="nav-link" :to="{ name: 'root' }">Front page</router-link>
                 </li>
+                <li v-if="$store.state.isUserLoggedIn && $store.state.user.tipKorisnika === 'ADMIN'" class="nav-item active">
+                    <router-link class="nav-link" :to="{ name: 'adminPanel' }">Admin panel</router-link>
+                </li>
                 <!-- <li v-if="$store.state.isUserLoggedIn" class="nav-item">
                     <router-link class="nav-link" :to="{ name: 'createPost'}">Create post</router-link>
                 </li> -->

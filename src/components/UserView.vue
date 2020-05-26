@@ -3,7 +3,7 @@
     <b-container class="bv-example-row" id="glavni">
         <b-row class="justify-content-md-center" id="prviRed">
             <h1>
-                Filter Tickets
+                Filter Reservations
             </h1>
         </b-row>
         <b-row class="justify-content-md-center">

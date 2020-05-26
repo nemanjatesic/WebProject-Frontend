@@ -10,7 +10,7 @@
             <b-col col lg="5">
                 <b-form>
                     <b-form-group label="Card type:">
-                        <b-form-radio v-model="ticketForm.oneWay" name="some-radios" value='true'>One way</b-form-radio>
+                        <b-form-radio v-model="ticketForm.oneWay" name="some-radios" value='true' @input="setReturnDateToNull()">One way</b-form-radio>
                         <b-form-radio v-model="ticketForm.oneWay" name="some-radios" value='false'>Two way</b-form-radio>
                     </b-form-group>
                     
@@ -124,9 +124,11 @@ export default {
         }
           
     },
+    
     methods: {
         async createTicket () {
             try {
+                if (!this.validateForm()) return;
                 let one_way = this.ticketForm.oneWay === 'true'
                 let depart_date = new Date(this.ticketForm.departDate.toString())
                 let return_date = null
@@ -139,9 +141,39 @@ export default {
                 const resp = await CardService.dodajKartu({one_way: one_way, depart_date:depart_date, return_date:return_date, avionskaKompanija: avionskaKompanija, flight:flight, available_count:available_count})
                 alert('Karta je uspesno dodata')
             } catch (error) {
-                this.error = error
                 console.log(error);
-                alert(error);
+                
+                alert('An error occurred')
+            }
+        },
+        validateForm() {
+            if (this.ticketForm.departDate === null || this.ticketForm.departDate === '') {
+                alert('Please insert depart date')
+                return false
+            }
+            if (this.ticketForm.availableCount <= 0) {
+                alert('Available count must be bigger then 0')
+                return false
+            }
+            if (this.ticketForm.airlineCompanyData.selected === null) {
+                alert('Please select airline company')
+                return false
+            }
+            if (this.ticketForm.flightData.selected === null) {
+                alert('Please select flight')
+                return false
+            }
+            if (this.ticketForm.oneWay === 'false') {
+                if (this.ticketForm.returnDate === null || this.ticketForm.returnDate === '') {
+                    alert('Please insert return date')
+                    return false
+                }
+            }
+            return true
+        },
+        async setReturnDateToNull() {
+            if (this.ticketForm.oneWay === 'true') {
+                this.ticketForm.returnDate = null
             }
         }
     }

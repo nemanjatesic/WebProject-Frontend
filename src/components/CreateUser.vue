@@ -70,6 +70,7 @@ export default {
     },
     methods: {
         async register () {
+            if (!this.validateForm()) return
             try {
                 const response = await UserService.createKorisnik({
                     username: this.userForm.username,
@@ -84,10 +85,17 @@ export default {
                   name: 'posts'
                 })*/
             } catch (error) {
-                this.error = error
-                console.log(error);
-                
-                alert('Pogresno ste ukucali email ili password');
+                alert('An error occurred with status code ' + error.response.status)
+            }
+        },
+        validateForm() {
+            if (!this.userForm.username) {
+                alert('Please enter username')
+                return false
+            }
+            if (!this.userForm.password) {
+                alert('Please enter password')
+                return false
             }
         },
         onReset(evt) {
