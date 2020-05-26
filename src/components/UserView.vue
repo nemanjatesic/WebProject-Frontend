@@ -50,6 +50,10 @@
                                 Delete
                             </b-button>
                         </template>
+
+                        <template v-slot:cell(Company)="data">
+                            <a class="mojaAKlasa" @click="goToCompany(data.item)">{{data.item.Company}}</a>
+                        </template>
                     </b-table>
                 </b-col>
         </b-row>
@@ -227,6 +231,16 @@ export default {
             this.filterForm.departDate = null
             this.filterForm.returnDate = null
             this.filterForm.one_way = 'null'
+        },
+        async goToCompany(data) {
+            console.log(data);
+            let kompanijaID = data.realValue.avionskaKarta.avionskaKompanija.id
+            this.$router.push({
+                name: 'viewCompany',
+                params: {
+                    comapnyId: kompanijaID
+                }
+            })
         }
     }
 };
@@ -248,5 +262,9 @@ export default {
     }
     #forma {
         padding-bottom: 50px;
+    }
+    .mojaAKlasa {
+        color: rgb(66, 135, 245);
+        cursor: pointer;
     }
 </style>

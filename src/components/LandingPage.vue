@@ -296,7 +296,11 @@ export default {
             console.log(data.realValue.id);
             
             this.$router.push({
-                path: `/admin/editTicket/${data.realValue.id}`
+                //path: `/admin/editTicket/${data.realValue.id}`
+                name: 'changeTicket',
+                params: {
+                    ticketId: data.realValue.id
+                }
             })
         },
         async goToCompany(data) {

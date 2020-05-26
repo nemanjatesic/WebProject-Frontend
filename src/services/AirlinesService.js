@@ -33,5 +33,26 @@ export default {
                 kompanijaID:id
             }
         })
+    },
+    createCompany(company) {
+        return Api().post('createCompany', company,  {
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                //"Authorization": "Bearer " + localStorage.jwt
+            }
+        })
+    },
+    changeCompanyName(company, newName) {
+        return Api().post('changeCompanyName', company,  {
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                //"Authorization": "Bearer " + localStorage.jwt
+            },
+            params: {
+                name:newName
+            }
+        })
     }
 }
